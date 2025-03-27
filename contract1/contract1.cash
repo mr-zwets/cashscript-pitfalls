@@ -1,0 +1,19 @@
+pragma cashscript 0.10.0;
+
+contract SharedFunds(
+    pubkey pkPerson0,
+    pubkey pkPerson1,
+  ) {
+    function smallPayment(sig userSig) {
+      // For small payments the value of the UTXO must be less than 1_000_000 satoshis
+      int valueCurrentUtxo = tx.inputs[this.activeInputIndex].value;
+      require(valueCurrentUtxo < 1000000);
+      // Either person can then spend the funds by providing their signature
+      require(checkSig(userSig, pkPerson0) || checkSig(userSig, pkPerson1));
+    }
+    function largePayment(sig userSig0, sig userSig1) {
+      // For large payments, both persons must sign
+      require(checkSig(userSig0, pkPerson0));
+      require(checkSig(userSig1, pkPerson1));
+    }
+}

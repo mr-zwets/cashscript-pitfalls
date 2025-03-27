@@ -1,0 +1,41 @@
+pragma cashscript 0.10.0;
+
+contract LastToRefreshWins(
+    int increment,
+    int periodBlocks
+) {
+    function refresh(
+        bytes userLockingBytecode // new payout address
+    ) {
+        // require the contract to be at index0 so that tx.inputs[0].value is value of the refresh timer contract
+        require(this.activeInputIndex == 0);
+
+        // require userLockingBytecode to be 25 bytes for a P2PKH locking script
+        require(userLockingBytecode.length == 25);
+
+        // require contract balance to increase by increment
+        int newBalance = tx.inputs[0].value + increment;
+        require(tx.outputs[0].value == newBalance);
+
+        // require this contract to be replicated on output index zero
+        require(tx.outputs[0].lockingBytecode == tx.inputs[0].lockingBytecode);
+        require(tx.outputs[0].tokenCategory == tx.inputs[0].tokenCategory);
+        // add new lockingbytecode to NFT state
+        require(tx.outputs[0].nftCommitment == userLockingBytecode);
+    }
+    function payout(
+    ) {
+        // require the contract to be at index0 so that tx.inputs[0].value is value of the refresh timer contract
+        require(this.activeInputIndex == 0);
+
+        int amountPayout = tx.inputs[0].value - 500; // 500 hardcoded fee
+        // require payout on output index zero
+        require(tx.outputs[0].value == amountPayout);
+        // read lockingbytecode from NFT state
+        bytes payoutLockingBytecode = tx.inputs[0].nftCommitment;
+        require(tx.outputs[0].lockingBytecode == payoutLockingBytecode);
+
+        //check relative locktime
+        require(tx.age >= periodBlocks);
+    }
+}

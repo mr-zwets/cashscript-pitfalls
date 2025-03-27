@@ -1,0 +1,52 @@
+pragma cashscript 0.10.0;
+
+// contract with 
+
+/*  --- State Mutable NFT ---
+    bytes20 authorizedPayoutPkh
+    bytes8 maximumWithdrawal
+*/
+
+contract SharedVault(
+    pubkey pkPerson0,
+    pubkey pkPerson1,
+  ) {
+    function toHotWallet(sig userSig0, sig userSig1) {
+      // Either person can send to the hotwallet by providing their signature
+      require(checkSig(userSig0, pkPerson0) || checkSig(userSig1, pkPerson1));
+
+      require(tx.inputs.length == 1);
+      require(tx.outputs.length == 2);
+
+      bytes authorizedPayoutPkh, bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(8);
+      // hotwallet output
+      int amountTransfered = tx.outputs[0].value;
+      require(amountTransfered <= int(maximumWithdrawal));
+      bytes25 authorizedLockingBytecode = new LockingBytecodeP2PKH(authorizedPayoutPkh);
+      require(tx.outputs[0].lockingBytecode == authorizedLockingBytecode);
+
+      // change output
+      int minerFee = 1000;
+      int remainingAmount = tx.inputs[0].value - amountTransfered - minerFee;
+      if(remainingAmount > 1000){
+        require(tx.outputs[1].lockingBytecode == tx.inputs[0].lockingBytecode);
+        require(tx.outputs[1].value == remainingAmount);
+        require(tx.outputs[1].nftCommitment == tx.outputs[0].nftCommitment);
+        require(tx.outputs[1].tokenCategory == tx.inputs[0].tokenCategory);
+      }
+    }
+    function updateVault(bytes20 newAuthorizedPayoutPkh, sig userSig0, sig userSig1) {
+      // Either person can send to the hotwallet by providing their signature
+      require(checkSig(userSig0, pkPerson0) || checkSig(userSig1, pkPerson1));
+
+      require(tx.inputs.length == 1);
+      require(tx.outputs.length == 1);
+
+      bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(8)[1];
+      bytes newCommitment = newAuthorizedPayoutPkh + maximumWithdrawal;
+      require(tx.outputs[0].nftCommitment == newCommitment);
+      require(tx.outputs[0].lockingBytecode == tx.inputs[0].lockingBytecode);
+      require(tx.outputs[0].tokenCategory == tx.inputs[0].tokenCategory);
+      require(tx.outputs[0].value == tx.inputs[0].value - 1000); // 1000 hardcoded fee
+    }
+}
