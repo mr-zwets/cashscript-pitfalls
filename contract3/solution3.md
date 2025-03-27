@@ -15,4 +15,7 @@ Use `new LockingBytecodeP2PKH()` to turn a `bytes20` item into a valid `P2pkhLoc
 
 ## Relevant Documentation
 
+Output Standardness:
+https://next.cashscript.org/docs/compiler/script-limits#output-standardness
+
 https://documentation.cash/protocol/blockchain/transaction/locking-script.html
