@@ -18,7 +18,7 @@ contract SharedVault(
       require(tx.inputs.length == 1);
       require(tx.outputs.length == 2);
 
-      bytes authorizedPayoutPkh, bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(8);
+      bytes authorizedPayoutPkh, bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(20);
       // hotwallet output
       int amountTransfered = tx.outputs[0].value;
       require(amountTransfered <= int(maximumWithdrawal));
@@ -42,7 +42,7 @@ contract SharedVault(
       require(tx.inputs.length == 1);
       require(tx.outputs.length == 1);
 
-      bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(8)[1];
+      bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(20)[1];
       bytes newCommitment = newAuthorizedPayoutPkh + maximumWithdrawal;
       require(tx.outputs[0].nftCommitment == newCommitment);
       require(tx.outputs[0].lockingBytecode == tx.inputs[0].lockingBytecode);

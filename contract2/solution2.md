@@ -5,7 +5,7 @@ The typings for the function arguments are only semantic, this means the length 
 This causes issues in `updateVault` because the nft commitment is overwritten with the new field:
 
 ```solidity
-      bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(8)[1];
+      bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(20)[1];
       bytes newCommitment = newAuthorizedPayoutPkh + maximumWithdrawal;
       require(tx.outputs[0].nftCommitment == newCommitment);
 ```
