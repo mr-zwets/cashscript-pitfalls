@@ -1,4 +1,4 @@
-pragma cashscript 0.10.0;
+pragma cashscript 0.12.0;
 
 contract LastToRefreshWins(
     int increment,
@@ -36,6 +36,6 @@ contract LastToRefreshWins(
         require(tx.outputs[0].lockingBytecode == payoutLockingBytecode);
 
         //check relative locktime
-        require(tx.age >= periodBlocks);
+        require(this.age >= periodBlocks);
     }
 }

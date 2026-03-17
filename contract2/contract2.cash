@@ -1,4 +1,4 @@
-pragma cashscript 0.10.0;
+pragma cashscript 0.12.0;
 
 // contract with 
 
@@ -18,7 +18,7 @@ contract SharedVault(
       require(tx.inputs.length == 1);
       require(tx.outputs.length == 2);
 
-      bytes authorizedPayoutPkh, bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(20);
+      bytes20 authorizedPayoutPkh, bytes maximumWithdrawal = tx.outputs[0].nftCommitment.split(20);
       // hotwallet output
       int amountTransfered = tx.outputs[0].value;
       require(amountTransfered <= int(maximumWithdrawal));

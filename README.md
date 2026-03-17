@@ -7,5 +7,5 @@ Test your knowledge of CashScript and BitcoinCash by investigating the contracts
 ## Contracts
 
 - Contract1: `SharedFunds` tests knowledge of the CashScript documentation / understanding of underlying low level-opcodes
-- Contract2: `SharedVault` tests knowledge of CashScript quirks
+- Contract2: `SharedVault` tests knowledge of CashScript quirks (v0.12 and prior)
 - Contract3: `LastToRefreshWins` tests knowledge of the Bitcoin Cash network rules
