@@ -1,0 +1,28 @@
+pragma cashscript >=0.8.0;
+
+/* This is a contract showcasing covenants outside of regular transactional use.
+ * It enforces the contract to make an "announcement" on Memo.cash, and send the
+ * remainder of contract funds back to the contract.
+ */
+contract Announcement() {
+    function announce() {
+        // Create the memo.cash announcement output
+        bytes announcement = new LockingBytecodeNullData([
+            0x6d02,
+            bytes('A contract may not injure a human being or, through inaction, allow a human being to come to harm.')
+        ]);
+
+        // Check that the first tx output matches the announcement
+        require(tx.outputs[0].value == 0);
+        require(tx.outputs[0].lockingBytecode == announcement);
+
+        // Calculate leftover money after fee (1000 sats)
+        // Check that the second tx output sends the change back if there's enough leftover for another announcement
+        int minerFee = 1000;
+        int changeAmount = tx.inputs[0].value - minerFee;
+        if (changeAmount >= minerFee) {
+            require(tx.outputs[1].lockingBytecode == tx.inputs[this.activeInputIndex].lockingBytecode);
+            require(tx.outputs[1].value == changeAmount);
+        }
+    }
+}

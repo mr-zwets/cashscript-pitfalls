@@ -1,0 +1,23 @@
+pragma cashscript 0.12.0;
+
+// contract with 
+
+/*  --- State Mutable NFT ---
+    bytes32 transactionId
+    bytes tokenAmount
+*/
+
+contract TokenSale(
+  bytes creatorLockingBytecode
+  ) {
+    function buyTokens(sig userSig) {
+      int satsPerTokens = 500;
+
+      // recreate contract
+
+      // pay out creator
+      require(tx.outputs[1].lockingBytecode == creatorLockingBytecode);
+      int paymentAmount = tokensBought * satsPerTokens;
+      require(tx.outputs[1].value == paymentAmount);
+    }
+}
